@@ -21,21 +21,36 @@
     dms,
     dms-plugin-registry,
     ...
-  }: {
-    homeManagerModules = let
-      module = {
-        config,
-        lib,
-        pkgs,
-        options,
-        ...
-      }:
-        import ./hm.nix {
-          inherit config lib pkgs options inputs;
-        };
-    in {
-      default = module;
-      dms = module;
+  }: let
+    hmModule = {
+      config,
+      lib,
+      pkgs,
+      options,
+      ...
+    }:
+      import ./hm.nix {
+        inherit config lib pkgs options inputs;
+      };
+
+    nixosModule = {
+      config,
+      lib,
+      options,
+      ...
+    }:
+      import ./nixos.nix {
+        inherit config lib options inputs self;
+      };
+  in {
+    homeManagerModules = {
+      default = hmModule;
+      dms = hmModule;
+    };
+
+    nixosModules = {
+      default = nixosModule;
+      dms = nixosModule;
     };
   };
 }

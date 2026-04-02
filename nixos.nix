@@ -1,0 +1,27 @@
+{
+  lib,
+  config,
+  options,
+  inputs,
+  self,
+  ...
+}: {
+  imports = [
+    inputs.dms.nixosModules.dank-material-shell
+  ];
+
+  options.dms.autoEnable = lib.mkEnableOption "automatic DankMaterialShell enablement and home-manager module loading" // {
+    default = true;
+  };
+
+  config = lib.mkMerge [
+    (lib.mkIf config.dms.autoEnable {
+      programs.dank-material-shell.enable = true;
+    })
+    (lib.mkIf (options ? home-manager) {
+      home-manager.sharedModules = [
+        self.homeManagerModules.default
+      ];
+    })
+  ];
+}
