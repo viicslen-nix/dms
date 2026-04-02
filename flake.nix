@@ -51,6 +51,7 @@
     nixosModules = {
       default = nixosModule;
       dms = nixosModule;
+      greeter = inputs.dms.nixosModules.greeter;
     };
   };
 }
