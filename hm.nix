@@ -69,6 +69,7 @@ in {
         "layout"
         "outputs"
         "windowrules"
+        "background-effect"
       ];
     };
   };
