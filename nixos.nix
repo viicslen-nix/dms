@@ -2,6 +2,7 @@
   lib,
   config,
   options,
+  pkgs,
   inputs,
   self,
   ...
@@ -16,7 +17,10 @@
 
   config = lib.mkMerge [
     (lib.mkIf config.dms.autoEnable {
-      programs.dank-material-shell.enable = true;
+      programs.dank-material-shell = {
+        enable = true;
+        quickshell.package = inputs.quickshell.packages.${pkgs.stdenv.hostPlatform.system}.default;
+      };
     })
     (lib.mkIf (options ? home-manager) {
       home-manager.sharedModules = [

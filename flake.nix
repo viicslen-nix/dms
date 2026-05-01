@@ -13,6 +13,11 @@
       url = "github:AvengeMedia/dms-plugin-registry";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    quickshell = {
+      url = "github:quickshell-mirror/quickshell";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs @ {
@@ -37,10 +42,11 @@
       config,
       lib,
       options,
+      pkgs,
       ...
     }:
       import ./nixos.nix {
-        inherit config lib options inputs self;
+        inherit config lib options pkgs inputs self;
       };
   in {
     homeManagerModules = {
