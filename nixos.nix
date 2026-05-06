@@ -11,9 +11,11 @@
     inputs.dms.nixosModules.dank-material-shell
   ];
 
-  options.dms.autoEnable = lib.mkEnableOption "automatic DankMaterialShell enablement and home-manager module loading" // {
-    default = true;
-  };
+  options.dms.autoEnable =
+    lib.mkEnableOption "automatic DankMaterialShell enablement and home-manager module loading"
+    // {
+      default = true;
+    };
 
   config = lib.mkMerge [
     (lib.mkIf config.dms.autoEnable {
