@@ -22,9 +22,6 @@
 
   outputs = inputs @ {
     self,
-    nixpkgs,
-    dms,
-    dms-plugin-registry,
     ...
   }: let
     hmModule = {
