@@ -19,8 +19,6 @@
 
   config = lib.mkMerge [
     (lib.mkIf config.dms.autoEnable {
-      stylix.targets.kmscon.enable = false;
-
       programs.dank-material-shell = {
         enable = true;
         quickshell.package = inputs.quickshell.packages.${pkgs.stdenv.hostPlatform.system}.default;
