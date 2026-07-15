@@ -10,7 +10,7 @@ in {
   imports = [
     inputs.dms.homeModules.niri
     inputs.dms.homeModules.dank-material-shell
-    inputs.dms-plugin-registry.modules.default
+    inputs.dms-plugin-registry.homeModules.default
   ];
 
   stylix.targets.dank-material-shell.enable = lib.mkIf stylixEnabled false;
