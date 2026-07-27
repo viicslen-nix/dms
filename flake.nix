@@ -9,6 +9,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # The greeter moved out of DankMaterialShell into its own repo.
+    dank-greeter = {
+      url = "github:AvengeMedia/dank-greeter";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     dms-plugin-registry = {
       url = "github:AvengeMedia/dms-plugin-registry";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -54,7 +60,7 @@
     nixosModules = {
       default = nixosModule;
       dms = nixosModule;
-      greeter = inputs.dms.nixosModules.greeter;
+      greeter = inputs.dank-greeter.nixosModules.default;
     };
   };
 }
