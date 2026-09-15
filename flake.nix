@@ -35,10 +35,12 @@
       lib,
       pkgs,
       options,
+      # Absent on a standalone home-manager eval; hm.nix reads the shell selection from it.
+      osConfig ? {},
       ...
     }:
       import ./hm.nix {
-        inherit config lib pkgs options inputs;
+        inherit config lib pkgs options inputs osConfig;
       };
 
     nixosModule = {
