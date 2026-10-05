@@ -1,5 +1,5 @@
 {
-  description = "Niri desktop environment configuration";
+  description = "DankMaterialShell, its plugins and greeter, wired for NixOS and home-manager";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -24,12 +24,25 @@
       url = "github:quickshell-mirror/quickshell";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    treefmt-nix = {
+      url = "github:numtide/treefmt-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs @ {
     self,
+    nixpkgs,
+    treefmt-nix,
     ...
   }: let
+    forAllSystems = nixpkgs.lib.genAttrs ["x86_64-linux" "aarch64-linux"];
+
+    treefmtEval =
+      forAllSystems (system:
+        treefmt-nix.lib.evalModule nixpkgs.legacyPackages.${system} ./treefmt.nix);
+
     hmModule = {
       config,
       lib,
@@ -64,5 +77,17 @@
       dms = nixosModule;
       greeter = inputs.dank-greeter.nixosModules.default;
     };
+
+    formatter = forAllSystems (system: treefmtEval.${system}.config.build.wrapper);
+
+    checks = forAllSystems (system: let
+      pkgs = nixpkgs.legacyPackages.${system};
+    in {
+      treefmt = treefmtEval.${system}.config.build.check self;
+      # statix fix (what treefmt runs) skips lints it cannot fix, such as repeated keys.
+      statix = pkgs.runCommandLocal "statix-check" {} ''
+        ${pkgs.lib.getExe pkgs.statix} check ${./.} && touch $out
+      '';
+    });
   };
 }
