@@ -82,8 +82,21 @@ Imports upstream's `niri` and `dank-material-shell` home modules and the
 - **Shell** — `programs.dank-material-shell` with VPN, calendar (khal),
   dynamic theming (matugen), audio visualizer (cava) and system monitoring
   (dgop) widgets, run as a systemd user service.
-- **Plugins** — `emojiLauncher`, `dockerManager`, `screenshotToggle`,
-  `linuxWallpaperEngine`, `dankPinentry`.
+- **Plugins** — `emojiLauncher`, `dockerManager`,
+  `linuxWallpaperEngine`, `dankPinentry`, `dankMenu`, `clipShare`,
+  `dmsThemeSync`, `githubNotifier`, `aiOverviewControl`, `claudeCodeUsage`,
+  `dmsAgent`, `cliproxyQuota`, `chatManager`, `chatRunner`, `whatsappChat`.
+  Plugins that only make sense on one machine stay installed by hand through
+  DMS's own plugin manager. `chatManager` and `whatsappChat` are rebuilt with
+  their Go daemons compiled into `bin/`, since the registry ships source only;
+  bump their `vendorHash` when the registry moves them. The command-line tools
+  the plugins call and nothing else installs go in `home.packages`, next to the
+  plugin list. `gpu-screen-recorder` is the exception: clipShare needs its
+  setcap wrapper, so it is enabled in `nixos.nix`.
+- **Moving a hand-installed plugin to home-manager** — uninstall it first.
+  DMS's plugin manager installs plugins as symlinks, and home-manager never
+  backs up a symlink it does not own, so activation fails with "would be
+  clobbered". `dms plugins uninstall <id>` keeps the plugin's settings.
 - **niri** — `niri.includes` makes DMS's `binds`, `alttab`, `wpblur`,
   `colors`, `layout`, `outputs` and `windowrules` override niri-flake's
   generated config (renamed to `hm.kdl`).

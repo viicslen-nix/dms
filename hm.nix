@@ -10,6 +10,34 @@
 
   # Defaults to dms on a standalone home-manager eval, where the option is absent.
   enabled = (osConfig.modules.desktop.shell or "dms") == "dms";
+
+  registryPlugins = import "${inputs.dms-plugin-registry}/nix/default.nix" {inherit pkgs;};
+
+  # The registry ships source only; these plugins refuse to start until their Go daemon exists in bin/.
+  withGoDaemon = id: binary: vendorHash: let
+    plugin = registryPlugins.${id};
+  in
+    pkgs.buildGoModule {
+      pname = "dms-plugin-${id}";
+      inherit (plugin) version;
+      src = plugin;
+      modRoot = "src";
+      inherit vendorHash;
+      env.CGO_ENABLED = 0;
+      buildPhase = ''
+        runHook preBuild
+        go build -trimpath -ldflags='-s -w' -o "$NIX_BUILD_TOP/${binary}" .
+        runHook postBuild
+      '';
+      doCheck = false;
+      installPhase = ''
+        runHook preInstall
+        cp -r ${plugin} $out
+        chmod -R u+w $out
+        install -Dm755 "$NIX_BUILD_TOP/${binary}" $out/bin/${binary}
+        runHook postInstall
+      '';
+    };
 in {
   imports = [
     inputs.dms.homeModules.niri
@@ -18,6 +46,17 @@ in {
   ];
 
   stylix.targets.dank-material-shell.enable = lib.mkIf stylixEnabled false;
+
+  # Runtime tools the enabled plugins call that nothing else installs; gpu-screen-recorder is in nixos.nix (needs its setcap wrapper).
+  home.packages = lib.mkIf enabled (with pkgs; [
+    ffmpeg # clipShare (needs libsvtav1)
+    slurp # clipShare
+    pulseaudio # clipShare: pactl for the audio monitor
+    file # chatManager: attachment mime type
+    sqlite # aiOverviewControl: opencode provider
+    libnotify # aiOverviewControl, dmsAgent
+    linux-wallpaperengine # linuxWallpaperEngine
+  ]);
 
   xdg.configFile."DankMaterialShell/themes/stylix.json" = lib.mkIf stylixEnabled {
     source = with config.lib.stylix.colors.withHashtag;
@@ -56,9 +95,25 @@ in {
     plugins = {
       emojiLauncher.enable = true;
       dockerManager.enable = true;
-      screenshotToggle.enable = true;
       linuxWallpaperEngine.enable = true;
       dankPinentry.enable = true;
+      dankMenu.enable = true;
+      clipShare.enable = true;
+      dmsThemeSync.enable = true;
+      githubNotifier.enable = true;
+      aiOverviewControl.enable = true;
+      claudeCodeUsage.enable = true;
+      dmsAgent.enable = true;
+      cliproxyQuota.enable = true;
+      chatManager = {
+        enable = true;
+        src = lib.mkForce (withGoDaemon "chatManager" "chat-managerd" "sha256-BJ+d4p5HCuR2816YKvRwbHZEWEe0B3rOH7TXWvQzauo=");
+      };
+      chatRunner.enable = true;
+      whatsappChat = {
+        enable = true;
+        src = lib.mkForce (withGoDaemon "whatsappChat" "whatsapp-chat-bridge" "sha256-RhARfSVPm/HV2T0MIkQSRrigJhWqCqhEzyyW0mPNuwI=");
+      };
     };
 
     niri.includes = {

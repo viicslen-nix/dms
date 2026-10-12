@@ -37,9 +37,13 @@ in {
 
   config = lib.mkMerge [
     (lib.mkIf config.dms.autoEnable {
-      programs.dank-material-shell = {
-        enable = true;
-        quickshell.package = inputs.quickshell.packages.${pkgs.stdenv.hostPlatform.system}.default;
+      programs = {
+        dank-material-shell = {
+          enable = true;
+          quickshell.package = inputs.quickshell.packages.${pkgs.stdenv.hostPlatform.system}.default;
+        };
+        # clipShare's region capture goes through KMS, which needs this module's setcap wrapper.
+        gpu-screen-recorder.enable = true;
       };
     })
     (lib.mkIf (options ? home-manager) {
