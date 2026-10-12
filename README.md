@@ -67,6 +67,13 @@ config yourself.
 The home-manager module is added to `home-manager.sharedModules` whenever the
 `home-manager` option exists, whatever `dms.autoEnable` says.
 
+When the consuming config declares `modules.desktop.askpass` (the program sudo
+runs for a password with no tty), the shell sets it to a `dms-askpass` wrapper
+while `programs.dank-material-shell.enable` is on. The wrapper asks through the
+`dankPinentry` plugin's modal via `pinentry-dms`. If DMS is not running or the
+plugin is not loaded, it hands off to the option's default program instead.
+Cancelling the modal fails sudo; it does not fall back.
+
 ### Home Manager — `hm.nix`
 
 Imports upstream's `niri` and `dank-material-shell` home modules and the
@@ -76,7 +83,7 @@ Imports upstream's `niri` and `dank-material-shell` home modules and the
   dynamic theming (matugen), audio visualizer (cava) and system monitoring
   (dgop) widgets, run as a systemd user service.
 - **Plugins** — `emojiLauncher`, `dockerManager`, `screenshotToggle`,
-  `linuxWallpaperEngine`.
+  `linuxWallpaperEngine`, `dankPinentry`.
 - **niri** — `niri.includes` makes DMS's `binds`, `alttab`, `wpblur`,
   `colors`, `layout`, `outputs` and `windowrules` override niri-flake's
   generated config (renamed to `hm.kdl`).
@@ -104,6 +111,7 @@ Imports upstream's `niri` and `dank-material-shell` home modules and the
 | `dank-greeter` | `AvengeMedia/dank-greeter` (the greeter left the main repo) |
 | `dms-plugin-registry` | `AvengeMedia/dms-plugin-registry` |
 | `quickshell` | `quickshell-mirror/quickshell` |
+| `dank-pinentry` | `pacman99/DankPinentry`, for the `pinentry-dms` binary behind `dms-askpass` |
 | `treefmt-nix` | `numtide/treefmt-nix`, for `nix fmt` and the checks |
 
 All of them follow `nixpkgs`.

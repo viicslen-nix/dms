@@ -58,6 +58,7 @@ in {
       dockerManager.enable = true;
       screenshotToggle.enable = true;
       linuxWallpaperEngine.enable = true;
+      dankPinentry.enable = true;
     };
 
     niri.includes = {

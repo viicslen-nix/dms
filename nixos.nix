@@ -6,7 +6,25 @@
   inputs,
   self,
   ...
-}: {
+}: let
+  cfg = config.programs.dank-material-shell;
+  pinentry-dms = inputs.dank-pinentry.packages.${pkgs.stdenv.hostPlatform.system}.pinentry-dms;
+
+  # Speaks askpass to sudo and Assuan to pinentry-dms; falls back while DMS or the plugin is down.
+  askpass = pkgs.writeShellScript "dms-askpass" ''
+    PATH=${lib.makeBinPath [cfg.package cfg.quickshell.package pinentry-dms pkgs.gnugrep pkgs.gnused]}
+
+    if ! dms ipc list 2>/dev/null | grep -qE '^[[:space:]]+dankPinentry[[:space:]]'; then
+      exec ${options.modules.desktop.askpass.default} "$@"
+    fi
+
+    desc=''${1//%/%25}
+    out=$(printf 'SETTITLE sudo\nSETDESC %s\nSETPROMPT Password:\nGETPIN\nBYE\n' "$desc" | pinentry-dms)
+    pin=$(printf '%s\n' "$out" | sed -n 's/^D //p')
+    [ -n "$pin" ] || exit 1
+    printf '%s\n' "''${pin//%25/%}"
+  '';
+in {
   imports = [
     inputs.dms.nixosModules.dank-material-shell
   ];
@@ -28,6 +46,10 @@
       home-manager.sharedModules = [
         self.homeManagerModules.default
       ];
+    })
+    # Declared by the root repo's desktop preset; absent on any other consumer.
+    (lib.optionalAttrs (options ? modules.desktop.askpass) {
+      modules.desktop.askpass = lib.mkIf cfg.enable askpass;
     })
   ];
 }

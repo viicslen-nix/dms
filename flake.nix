@@ -20,6 +20,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # pinentry-dms, which the askpass wrapper drives; the plugin half comes from the registry.
+    dank-pinentry = {
+      url = "github:pacman99/DankPinentry";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     quickshell = {
       url = "github:quickshell-mirror/quickshell";
       inputs.nixpkgs.follows = "nixpkgs";
