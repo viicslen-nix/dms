@@ -55,7 +55,6 @@ in {
     file # chatManager: attachment mime type
     sqlite # aiOverviewControl: opencode provider
     libnotify # aiOverviewControl, dmsAgent
-    linux-wallpaperengine # linuxWallpaperEngine
   ]);
 
   xdg.configFile."DankMaterialShell/themes/stylix.json" = lib.mkIf stylixEnabled {
@@ -95,7 +94,6 @@ in {
     plugins = {
       emojiLauncher.enable = true;
       dockerManager.enable = true;
-      linuxWallpaperEngine.enable = true;
       dankPinentry.enable = true;
       dankMenu.enable = true;
       clipShare.enable = true;
