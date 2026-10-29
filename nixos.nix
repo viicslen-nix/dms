@@ -40,6 +40,8 @@ in {
       programs = {
         dank-material-shell = {
           enable = true;
+          # Not the module default: that builds with the host pkgs, whose go_1_27 can lag core/go.mod.
+          package = inputs.dms.packages.${pkgs.stdenv.hostPlatform.system}.dms-shell;
           quickshell.package = inputs.quickshell.packages.${pkgs.stdenv.hostPlatform.system}.default;
         };
         # clipShare's region capture goes through KMS, which needs this module's setcap wrapper.

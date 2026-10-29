@@ -83,6 +83,8 @@ in {
 
   programs.dank-material-shell = {
     enable = enabled;
+    # Not the module default: that builds with the host pkgs, whose go_1_27 can lag core/go.mod.
+    package = inputs.dms.packages.${pkgs.stdenv.hostPlatform.system}.dms-shell;
     systemd.enable = true;
 
     enableVPN = true; # VPN management widget
