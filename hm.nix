@@ -134,6 +134,9 @@ in {
     };
   };
 
+  # mkForce: flakes/niri binds Mod+O to niri's own hotkey overlay.
+  programs.niri.settings.binds."Mod+O".action = lib.mkIf enabled (lib.mkForce (config.lib.niri.actions.spawn "dms" "ipc" "call" "keybinds" "toggle" "niri"));
+
   # desktop-shell.target is declared by modules/nixos/desktop/shell; compositors
   # start it without naming a shell, so binding here is what autostarts dms.
   systemd.user.services.dms = lib.mkIf enabled {
