@@ -4,10 +4,9 @@
 
 [![NixOS unstable](https://img.shields.io/badge/NixOS-unstable-5277C3?style=flat-square&logo=nixos&logoColor=white)](https://nixos.org)
 [![Home Manager](https://img.shields.io/badge/Home_Manager-module-41439A?style=flat-square)](https://github.com/nix-community/home-manager)
-[![Quickshell](https://img.shields.io/badge/built_on-Quickshell-E0A458?style=flat-square)](https://github.com/quickshell-mirror/quickshell)
+[![Quickshell](https://img.shields.io/badge/built_on-dux--qt--base-E0A458?style=flat-square)](https://github.com/duxlabs-dev/dux-qt-base)
 
-A thin layer over upstream's modules: it enables DMS on NixOS with a current
-Quickshell, hands every home-manager user a configured shell (plugins, niri
+A thin layer over upstream's modules: it enables DMS on NixOS, hands every home-manager user a configured shell (plugins, niri
 integration, a Stylix theme), and re-exports the
 [dank-greeter](https://github.com/AvengeMedia/dank-greeter) module. Part of
 [viicslen-nix/nixos](https://github.com/viicslen-nix/nixos), where it is the
@@ -62,7 +61,7 @@ config yourself.
 
 | Option | Default | Effect |
 | --- | --- | --- |
-| `dms.autoEnable` | `true` | Sets `programs.dank-material-shell.enable` and points `quickshell.package` at this flake's `quickshell` input |
+| `dms.autoEnable` | `true` | Sets `programs.dank-material-shell.enable` and `package` to upstream's flake build, whose Quickshell runtime is its own embedded fork, `dux-qt-base` |
 
 The home-manager module is added to `home-manager.sharedModules` whenever the
 `home-manager` option exists, whatever `dms.autoEnable` says.
@@ -123,7 +122,6 @@ Imports upstream's `niri` and `dank-material-shell` home modules and the
 | `dms` | `AvengeMedia/DankMaterialShell` |
 | `dank-greeter` | `AvengeMedia/dank-greeter` (the greeter left the main repo) |
 | `dms-plugin-registry` | `AvengeMedia/dms-plugin-registry` |
-| `quickshell` | `quickshell-mirror/quickshell` |
 | `dank-pinentry` | `pacman99/DankPinentry`, for the `pinentry-dms` binary behind `dms-askpass` |
 | `treefmt-nix` | `numtide/treefmt-nix`, for `nix fmt` and the checks |
 
